@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Client</title>
+</head>
+<body>
+    <h1>WebSocket Client</h1>
+
+    <div>
+        <label for="message">Message:</label>
+        <input type="text" id="message">
+        <button id="sendButton">Send</button>
+    </div>
+
+    <div id="output"></div>
+
+    <script>
+        const serverUrl = 'ws://localhost:8080'; 
+
+        const socket = new WebSocket(serverUrl);
+        socket.addEventListener('message', (event) => {
+            if (event.data instanceof Blob) {
+                reader = new FileReader();
+
+                reader.onload = () => {
+                    console.log("Result: " + reader.result);
+                };
+
+                reader.readAsText(event.data);
+            } else {
+                console.log("Result: " + event.data);
+            }
+        });
+
+      
+        socket.addEventListener('error', (error) => {
+            console.error('WebSocket error:', error);
+        });
+
+      
+        const sendButton = document.getElementById('sendButton');
+        sendButton.addEventListener('click', () => {
+            const messageInput = document.getElementById('message');
+            const message = messageInput.value;
+            socket.send(message);
+            messageInput.value = '';
+        });
+    </script>
+</body>
+</html>
